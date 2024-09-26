@@ -8,9 +8,6 @@ use serenity::{
 use crate::structs::VerifiedUser;
 
 pub async fn run(http: &Arc<Http>, interaction: &CommandInteraction) -> String {
-    let reply_msg = format!("Hello <@{}> :)\n\nRunning ...", interaction.user.id);
-    crate::helper::reply(&http, reply_msg, interaction).await;
-
     let coll = crate::mongo::get_coll::<VerifiedUser>("verified_users");
     let query = doc! {
         "id": interaction.user.id.to_string(),

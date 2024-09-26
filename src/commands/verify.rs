@@ -90,9 +90,6 @@ async fn update(habbo: &str, interaction: &CommandInteraction, coll: &Collection
 }
 
 pub async fn run(http: &Arc<Http>, interaction: &CommandInteraction) -> String {
-    let mut reply_msg = format!("Hello <@{}> :)\n\nRunning ...", interaction.user.id);
-    crate::helper::reply(&http, reply_msg, interaction).await;
-
     if interaction.data.options.is_empty() {
         return format!(
             "Hello <@{}> :)\n\nThe username is missing!",
@@ -110,7 +107,7 @@ pub async fn run(http: &Arc<Http>, interaction: &CommandInteraction) -> String {
     if !add(habbo, interaction, &coll).await {
         return format!("Hello <@{}> :)\n\nUnfortunately we could not add you to our database! Please try again later!", interaction.user.id);
     } else {
-        reply_msg = format!("Hello <@{}> :)\n\nTo verify yourself, change your motto to `verify` within the next 45 seconds and change it again after a successful verification!", interaction.user.id);
+        let reply_msg = format!("Hello <@{}> :)\n\nTo verify yourself, change your motto to `verify` within the next 45 seconds and change it again after a successful verification!", interaction.user.id);
         crate::helper::edit_reply(&http, reply_msg, interaction).await;
     }
 

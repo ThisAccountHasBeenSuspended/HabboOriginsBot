@@ -7,8 +7,6 @@ use serenity::{
     prelude::{Context, EventHandler},
 };
 
-use crate::helper;
-
 #[derive(Deserialize)]
 pub struct MongoDB {
     uri: Box<str>,
@@ -116,14 +114,17 @@ pub struct Handler;
 impl EventHandler for Handler {
     async fn interaction_create(&self, ctx: Context, ia: Interaction) {
         if let Interaction::Command(command) = ia {
+            let reply_msg = format!("Hello <@{}> :)\n\nRunning ...", command.user.id);
+            crate::helper::reply(&ctx.http, reply_msg, &command).await;
+
             let result = match command.data.name.as_str() {
                 "verify" => crate::commands::verify::run(&ctx.http, &command).await,
-                "check" => crate::commands::check::run(&ctx.http, &command).await,
+                "check" => crate::commands::check::run(&command).await,
                 "reset" => crate::commands::reset::run(&ctx.http, &command).await,
                 "info" => crate::commands::info::run(&ctx.http, &command).await,
                 _ => "Oops!".into()
             };
-            helper::edit_reply(&ctx.http, result, &command).await;
+            crate::helper::edit_reply(&ctx.http, result, &command).await;
         }
     }
 

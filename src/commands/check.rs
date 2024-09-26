@@ -1,16 +1,11 @@
-use std::sync::Arc;
-
 use serenity::{
-    all::{CommandInteraction, Http},
+    all::CommandInteraction,
     builder::CreateCommand,
 };
 
 use crate::structs::VerifiedUser;
 
-pub async fn run(http: &Arc<Http>, interaction: &CommandInteraction) -> String {
-    let reply_msg = format!("Hello <@{}> :)\n\nRunning ...", interaction.user.id);
-    crate::helper::reply(&http, reply_msg, interaction).await;
-
+pub async fn run(interaction: &CommandInteraction) -> String {
     if interaction.data.options.is_empty() {
         return format!(
             "Hello <@{}> :)\n\nThe user is missing!",

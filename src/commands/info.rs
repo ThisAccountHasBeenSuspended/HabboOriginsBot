@@ -6,9 +6,6 @@ use serenity::all::{
 };
 
 pub async fn run(http: &Arc<Http>, interaction: &CommandInteraction) -> String {
-    let reply_msg = format!("Hello <@{}> :)\n\nRunning ...", interaction.user.id);
-    crate::helper::reply(&http, reply_msg, interaction).await;
-
     if interaction.data.options.is_empty() {
         return format!(
             "Hello <@{}> :)\n\nThe username is missing!",
