@@ -1,8 +1,6 @@
 name: Rust
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -22,4 +20,4 @@ jobs:
         rustc --version
     
     - name: Build
-      run: cargo build --release
+      run: cargo build
