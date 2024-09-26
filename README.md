@@ -1,8 +1,5 @@
 
-![Screenshot 2024-09-25 120106](https://github.com/user-attachments/assets/7885ee44-ed3e-447c-90d8-0b688812c3cb)
-
-### Result
-https://youtu.be/LfMAEDwJjXc
+![Screenshot 2024-09-26 090408](https://github.com/user-attachments/assets/573a92ac-8cbd-446e-ad60-dabc174ed4bf)
 
 ### Create your own bot
-https://youtu.be/lBr-g6cNoeU
+[https://youtu.be/lBr-g6cNoeU](https://www.youtube.com/watch?v=iCiJFWjbli8)
