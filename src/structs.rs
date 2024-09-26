@@ -100,6 +100,7 @@ impl EventHandler for Handler {
         if let Interaction::Command(command) = ia {
             let result = match command.data.name.as_str() {
                 "verify" => crate::commands::verify::run(&ctx.http, &command).await,
+                "check" => crate::commands::check::run(&ctx.http, &command).await,
                 "reset" => crate::commands::reset::run(&ctx.http, &command).await,
                 "info" => crate::commands::info::run(&ctx.http, &command).await,
                 _ => "Oops!".into()
@@ -111,18 +112,17 @@ impl EventHandler for Handler {
     async fn ready(&self, ctx: Context, _ready: Ready) {
         let guild_id = GuildId::new(crate::settings().get_guild().get_id());
 
-        let commands = guild_id
+        let _ = guild_id
             .set_commands(
                 &ctx.http,
                 vec![
                     crate::commands::verify::register(),
+                    crate::commands::check::register(),
                     crate::commands::reset::register(),
                     crate::commands::info::register(),
                 ],
             )
             .await;
-
-        info!("I now have the following guild slash commands: {commands:#?}");
     }
 }
 

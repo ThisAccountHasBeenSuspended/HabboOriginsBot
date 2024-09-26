@@ -3,7 +3,7 @@ use std::sync::Arc;
 use mongodb::Collection;
 use serenity::{
     all::{
-        CommandInteraction, CommandOptionType, CreateCommandOption, GuildId, Http, RoleId, UserId,
+        CommandInteraction, GuildId, Http, RoleId, UserId,
     },
     builder::CreateCommand,
     futures::TryStreamExt,
@@ -168,6 +168,8 @@ pub async fn run(http: &Arc<Http>, interaction: &CommandInteraction) -> String {
 }
 
 pub fn register() -> CreateCommand {
+    use serenity::all::{CreateCommandOption, CommandOptionType};
+
     CreateCommand::new("verify")
         .description("Verify your account")
         .add_option(
