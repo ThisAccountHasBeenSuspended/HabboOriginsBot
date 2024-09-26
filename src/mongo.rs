@@ -14,9 +14,9 @@ pub fn client(opts: Option<ClientOptions>) -> &'static Client {
 
 pub async fn init() {
     let settings = crate::settings();
-    let mongodb_uri = settings.get_mongodb_uri();
+    let mdb = settings.get_mongodb();
 
-    let options = match mongodb::options::ClientOptions::parse(mongodb_uri).await {
+    let options = match mongodb::options::ClientOptions::parse(mdb.get_uri()).await {
         Ok(r) => r,
         Err(e) => panic!("{}", e),
     };
@@ -27,7 +27,10 @@ pub fn get_coll<T>(name: &str) -> Collection<T>
 where
     T: Sync + Send,
 {
+    let settings = crate::settings();
+    let mdb = settings.get_mongodb();
+
     let client = client(None);
-    let db = client.database("Cluster0");
+    let db = client.database(mdb.get_database());
     db.collection::<T>(name)
 }

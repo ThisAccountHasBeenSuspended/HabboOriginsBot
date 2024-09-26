@@ -10,6 +10,24 @@ use serenity::{
 use crate::helper;
 
 #[derive(Deserialize)]
+pub struct MongoDB {
+    uri: Box<str>,
+    database: Box<str>,
+}
+
+impl MongoDB {
+    #[inline(always)]
+    pub fn get_uri(&'static self) -> &'static str {
+        &self.uri
+    }
+
+    #[inline(always)]
+    pub fn get_database(&'static self) -> &'static str {
+        &self.database
+    }
+}
+
+#[derive(Deserialize)]
 pub struct Guild {
     id: u64,
     token: Box<str>,
@@ -53,7 +71,7 @@ impl Threads {
 
 #[derive(Deserialize)]
 pub struct Settings {
-    mongodb_uri: Box<str>,
+    mongodb: MongoDB,
     guild: Guild,
     threads: Threads,
 }
@@ -77,8 +95,8 @@ impl Settings {
     }
 
     #[inline(always)]
-    pub fn get_mongodb_uri(&'static self) -> &'static str {
-        &self.mongodb_uri
+    pub fn get_mongodb(&'static self) -> &'static MongoDB {
+        &self.mongodb
     }
 
     #[inline(always)]
