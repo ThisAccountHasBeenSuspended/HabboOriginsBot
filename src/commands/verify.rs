@@ -141,7 +141,7 @@ pub async fn run(http: &Arc<Http>, interaction: &CommandInteraction) -> String {
 
     if res_value["motto"] != "verify" {
         return format!(
-            "Hello <@{}> :)\n\nThe motto of the Habbo \"{}\" was not changed to \"verify\" within 45 seconds. Verification failed!",
+            "Hello <@{}> :)\n\nThe motto of the Habbo \"{}\" was not changed to `verify` within 45 seconds. Verification failed!",
             interaction.user.id,
             habbo
         );
