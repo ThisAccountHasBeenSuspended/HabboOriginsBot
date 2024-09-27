@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::{fs::File, io::Write};
 
 use serde::{Deserialize, Serialize};
 use serenity::{
@@ -7,7 +7,7 @@ use serenity::{
     prelude::{Context, EventHandler},
 };
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct MongoDB {
     uri: Box<str>,
     database: Box<str>,
@@ -25,10 +25,10 @@ impl MongoDB {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct Guild {
     id: u64,
-    token: Box<str>,
+    #[serde(default)]
     verify_role_id: u64,
 }
 
@@ -39,17 +39,17 @@ impl Guild {
     }
 
     #[inline(always)]
-    pub fn get_token(&'static self) -> &'static str {
-        &self.token
-    }
-
-    #[inline(always)]
     pub fn get_verify_role_id(&'static self) -> u64 {
         self.verify_role_id
     }
+
+    #[inline(always)]
+    pub fn set_verify_role_id(&'static mut self, val: u64) {
+        self.verify_role_id = val;
+    }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct Threads {
     count: u16,
     stack_size: usize,
@@ -67,10 +67,11 @@ impl Threads {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct Settings {
     mongodb: MongoDB,
     guild: Guild,
+    token: Box<str>,
     threads: Threads,
 }
 
@@ -93,6 +94,11 @@ impl Settings {
     }
 
     #[inline(always)]
+    pub unsafe fn as_mut(&'static self) -> &'static mut Self {
+        crate::helper::ref_to_refmut(&self)
+    }
+
+    #[inline(always)]
     pub fn get_mongodb(&'static self) -> &'static MongoDB {
         &self.mongodb
     }
@@ -103,8 +109,29 @@ impl Settings {
     }
 
     #[inline(always)]
+    pub unsafe fn get_guild_mut(&'static mut self) -> &'static mut Guild {
+        &mut self.guild
+    }
+
+    #[inline(always)]
+    pub fn get_token(&'static self) -> &'static str {
+        &self.token
+    }
+
+    #[inline(always)]
     pub fn get_threads(&'static self) -> &'static Threads {
         &self.threads
+    }
+
+    pub fn save(&'static self) {
+        let buf = serde_json::to_vec_pretty(&self).unwrap();
+        let mut file = File::options()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open("settings.json")
+            .unwrap();
+        let _ = file.write_all(&buf);
     }
 }
 
@@ -118,6 +145,7 @@ impl EventHandler for Handler {
             crate::helper::reply(&ctx.http, reply_msg, &command).await;
 
             let result = match command.data.name.as_str() {
+                "init" => crate::commands::init::run(&command).await,
                 "verify" => crate::commands::verify::run(&ctx.http, &command).await,
                 "check" => crate::commands::check::run(&command).await,
                 "reset" => crate::commands::reset::run(&ctx.http, &command).await,
@@ -135,6 +163,7 @@ impl EventHandler for Handler {
             .set_commands(
                 &ctx.http,
                 vec![
+                    crate::commands::init::register(),
                     crate::commands::verify::register(),
                     crate::commands::check::register(),
                     crate::commands::reset::register(),

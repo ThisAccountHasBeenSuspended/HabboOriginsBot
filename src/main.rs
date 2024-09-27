@@ -15,10 +15,13 @@ use tokio::runtime::{Builder, Runtime};
 // MOD
 mod commands;
 mod helper;
+mod macros;
 mod mongo;
 mod structs;
 
 pub const LOOKUP_URL: &str = "https://origins.habbo.com/api/public/users?name=";
+// https://discord.com/developers/docs/reference#snowflakes
+pub const LOWEST_ID: u64 = 10000000000000000;
 
 pub fn settings() -> &'static structs::Settings {
     use std::sync::OnceLock;
@@ -83,7 +86,7 @@ pub async fn start() {
     // Set gateway intents, which decides what events the bot will be notified about
     let intents = GatewayIntents::GUILDS | GatewayIntents::GUILD_MESSAGES;
 
-    let token = settings().get_guild().get_token();
+    let token = settings().get_token();
     let mut client = match Client::builder(token, intents)
         .event_handler(structs::Handler)
         .activity(ActivityData::playing("Habbo Hotel:Origins"))

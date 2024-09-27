@@ -8,6 +8,8 @@ use serenity::{
 use crate::structs::VerifiedUser;
 
 pub async fn run(http: &Arc<Http>, interaction: &CommandInteraction) -> String {
+    crate::check_role_available!(interaction.user.id.get());
+
     let coll = crate::mongo::get_coll::<VerifiedUser>("verified_users");
     let query = doc! {
         "id": interaction.user.id.to_string(),

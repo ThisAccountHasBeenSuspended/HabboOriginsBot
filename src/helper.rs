@@ -2,6 +2,11 @@ use std::sync::Arc;
 
 use serenity::all::{CommandInteraction, Http};
 
+#[deny(clippy::mut_from_ref)]
+pub unsafe fn ref_to_refmut<T>(val: &T) -> &mut T {
+    (val as *const T as *mut T).as_mut().unwrap_unchecked()
+}
+
 pub async fn reqwest<T, R>(url: &str, cb: T) -> (bool, Option<R>)
 where
     T: Fn(reqwest::Response) -> R,

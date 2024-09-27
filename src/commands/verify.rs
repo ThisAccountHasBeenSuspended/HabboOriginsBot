@@ -90,6 +90,8 @@ async fn update(habbo: &str, interaction: &CommandInteraction, coll: &Collection
 }
 
 pub async fn run(http: &Arc<Http>, interaction: &CommandInteraction) -> String {
+    crate::check_role_available!(http, interaction.user.id.get());
+
     if interaction.data.options.is_empty() {
         return format!(
             "Hello <@{}> :)\n\nThe username is missing!",
