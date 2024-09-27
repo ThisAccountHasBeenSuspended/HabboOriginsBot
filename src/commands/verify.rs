@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use mongodb::Collection;
+use rand::Rng;
 use serenity::{
     all::{
         CommandInteraction, GuildId, Http, RoleId, UserId,
@@ -107,10 +108,16 @@ pub async fn run(http: &Arc<Http>, interaction: &CommandInteraction) -> String {
         return format!("Hello <@{}> :)\n\nYou are already verified! Use the command `/reset` to delete all your data from our database, remove all your roles and verify yourself again.", interaction.user.id);
     }
 
+    let verify_code: String = rand::thread_rng()
+        .sample_iter(&rand::distributions::Alphanumeric)
+        .take(5)
+        .map(char::from)
+        .collect();
+
     if !add(habbo, interaction, &coll).await {
         return format!("Hello <@{}> :)\n\nUnfortunately we could not add you to our database! Please try again later!", interaction.user.id);
     } else {
-        let reply_msg = format!("Hello <@{}> :)\n\nTo verify yourself, change your motto to `verify` within the next 45 seconds and change it again after a successful verification!", interaction.user.id);
+        let reply_msg = format!("Hello <@{}> :)\n\nTo verify yourself, change your motto to `{}` within the next 45 seconds and change it again after a successful verification!", interaction.user.id, verify_code);
         crate::helper::edit_reply(&http, reply_msg, interaction).await;
     }
 
@@ -135,15 +142,16 @@ pub async fn run(http: &Arc<Http>, interaction: &CommandInteraction) -> String {
             "Hello <@{}> :)\n\nThe Habbo \"{}\" does not exist or the profile has been set to private!\n\n**error:**\n`{}`",
             interaction.user.id,
             habbo,
-            ev.as_str().unwrap()
+            ev.as_str().unwrap(),
         );
     }
 
-    if res_value["motto"] != "verify" {
+    if res_value["motto"] != verify_code {
         return format!(
-            "Hello <@{}> :)\n\nThe motto of the Habbo \"{}\" was not changed to `verify` within 45 seconds. Verification failed!",
+            "Hello <@{}> :)\n\nThe motto of the Habbo \"{}\" was not changed to `{}` within 45 seconds. Verification failed!",
             interaction.user.id,
-            habbo
+            habbo,
+            verify_code,
         );
     }
 
