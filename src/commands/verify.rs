@@ -14,6 +14,7 @@ use crate::structs::VerifiedUser;
 async fn check(interaction: &CommandInteraction, coll: &Collection<VerifiedUser>) -> bool {
     let query = doc! {
         "id": interaction.user.id.to_string(),
+        "verified": true,
     };
     match coll.find_one(query).await {
         Ok(r) => r.is_some(),

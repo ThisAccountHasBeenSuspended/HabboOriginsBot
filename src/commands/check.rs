@@ -27,6 +27,7 @@ pub async fn run(interaction: &CommandInteraction) -> String {
         let coll = crate::mongo::get_coll::<VerifiedUser>("verified_users");
         let query = doc! {
             "id": user_id.get().to_string(),
+            "verified": true,
         };
 
         if let Ok(user_o) = coll.find_one(query).await {
